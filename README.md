@@ -15,7 +15,7 @@ Herramienta de línea de comandos (CLI) para gestionar, visualizar y simular cal
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone <url-del-repositorio>
+    git clone https://github.com/lyoss-usm/calculadora-de-notas
     cd calculadora-de-notas
     ```
 
