@@ -1,0 +1,14 @@
+{
+  "nota_aprobar": 55,
+  "nota_min": 0,
+  "nota_max": 100,
+
+  "use_montecarlo": true,
+  "n_samples": 10000,
+  "step": 2,
+
+  "n_discretizacion": 202,
+  "cortes": [55, 70, 80, 90, 100],
+  "cmap": "Portaland",
+  "inverse_cmap": false
+}

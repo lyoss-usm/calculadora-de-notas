@@ -1,0 +1,95 @@
+{
+  "CC": {
+    "nombre": "Computación Científica",
+    "objetivo": 90,
+    "evaluaciones": [
+      ["C1", 0.0, false, false],
+      ["C2", 0.0, false, false],
+      ["C3", 0.0, false, false],
+      ["L1", 0.0, false, false],
+      ["L2", 0.0, false, false],
+      ["L3", 0.0, false, false],
+      ["L4", 0.0, false, false],
+      ["L5", 0.0, false, false],
+      ["g",  0.0, false, false]
+    ]
+  },
+  "DIU": {
+    "nombre": "Desarrollo de Interfaces de Usuario",
+    "objetivo": 80,
+    "evaluaciones": [
+      ["C1",  0.0, false, false],
+      ["C2",  0.0, false, false],
+      ["T1",  0.0, false, false],
+      ["T2",  0.0, false, false],
+      ["T3",  0.0, false, false],
+      ["T4",  0.0, false, false],
+      ["T5",  0.0, false, false],
+      ["T6",  0.0, false, false],
+      ["T7",  0.0, false, false],
+      ["T8",  0.0, false, false],
+      ["T9",  0.0, false, false],
+      ["T10", 0.0, false, false],
+      ["P1",  0.0, false, false],
+      ["P2",  0.0, false, false]
+    ] 
+  },
+  "SIGES": {
+    "nombre": "Sistemas de Gestión",
+    "objetivo": 80,
+    "evaluaciones": [
+      ["C",   0.0, false, false],
+      ["Q1",  0.0, false, false],
+      ["Q2",  0.0, false, false],
+      ["Q3",  0.0, false, false],
+      ["Q4",  0.0, false, false],
+      ["Q5",  0.0, false, false],
+      ["CA1", 0.0, false, false],
+      ["CA2", 0.0, false, false],
+      ["CA3", 0.0, false, false],
+      ["CA4", 0.0, false, false],
+      ["CA5", 0.0, false, false],
+      ["AP1", 0.0, false, false],
+      ["AP2", 0.0, false, false],
+      ["AP3", 0.0, false, false],
+      ["AP4", 0.0, false, false],
+      ["I",   0.0, false, false]
+    ]
+  },
+  "IA": {
+    "nombre": "Inteligencia Artificial",
+    "objetivo": 80,
+    "evaluaciones": [
+      ["C1", 0.0, false, false],
+      ["C2", 0.0, false, false],
+      ["P",  0.0, false, false]
+    ]
+  },
+  "DISTRIBUIDOS": {
+    "nombre": "Sistemas distribuidos",
+    "objetivo": 70,
+    "evaluaciones": [
+      ["C1", 0.0, false, false],
+      ["C2", 0.0, false, false],
+      ["T1", 0.0, false, false],
+      ["T2", 0.0, false, false],
+      ["T3", 0.0, false, false],
+      ["Q1", 0.0, false, false],
+      ["Q2", 0.0, false, false],
+      ["Q3", 0.0, false, false],
+      ["Q4", 0.0, false, false]
+    ]
+  },
+  "GEOMETRY COMP": {
+    "nombre": "Geometría Computacional",
+    "objetivo": 90,
+    "evaluaciones": [
+      ["C",  0.0, false, false],
+      ["P",  0.0, false, false],
+      ["T1", 0.0, false, false],
+      ["T2", 0.0, false, false],
+      ["T3", 0.0, false, false],
+      ["T4", 0.0, false, false]
+    ]
+  }
+}
