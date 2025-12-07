@@ -1,15 +1,36 @@
-import utils as ut
+import os
 
-class Config:
-    def __init__(self, config_file='data/config.json'):
-        self.config = ut.read_json(config_file)
 
-    def get(self, key, default=None):
-        return self.config.get(key, default)
+class FlaskConfig:
+    """Configuración base de Flask."""
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
+    
+    JSON_AS_ASCII = False
+    
+    DEBUG = False
+    TESTING = False
 
-    def set(self, key, value):
-        self.config[key] = value
-        ut.write_json(self.config, 'config.json')
 
-    def __str__(self):
-        return str(self.config)
+class DevelopmentConfig(FlaskConfig):
+    """Configuración para desarrollo."""
+    DEBUG = True
+    ENV = 'development'
+
+
+class ProductionConfig(FlaskConfig):
+    """Configuración para producción."""
+    DEBUG = False
+    ENV = 'production'
+
+
+class TestingConfig(FlaskConfig):
+    """Configuración para testing."""
+    TESTING = True
+    DEBUG = True
+
+config = {
+    'development': DevelopmentConfig,
+    'production': ProductionConfig,
+    'testing': TestingConfig,
+    'default': DevelopmentConfig
+}
