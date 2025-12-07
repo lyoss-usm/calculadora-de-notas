@@ -1,0 +1,171 @@
+{% extends "layouts/base.html" %} {% block title %}Calculadora de Notas -
+Inicio{% endblock %} {% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-badge">🎓 De estudiantes para estudiantes</div>
+    <h1 class="hero-title">
+      Calculadora de Notas<br />
+      <span class="hero-title-gradient">& Simulación</span>
+    </h1>
+    <p class="hero-description">
+      Analiza tu rendimiento académico, simula escenarios y<br />
+      descubre qué necesitas para aprobar tus ramos.
+    </p>
+    <div class="hero-search">
+      <svg
+        class="search-icon"
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4-4"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Busca tu ramo (Ej: Física I, Matemáticas I...)"
+      />
+    </div>
+  </div>
+</section>
+
+<section class="popular-section">
+  <h2 class="section-title">Ramos Populares</h2>
+
+  <div class="courses-grid">
+    <!-- Card 1 -->
+    {% set title='Matemáticas I' %} {% set code='MAT021' %} {% set
+    certamenes=true %} {% set controles=true %} {% set
+    icon_gradient='linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' %} {% set
+    icon_svg='<svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="48"
+      height="48"
+      viewBox="0 0 24 24"
+    >
+      <path
+        fill="none"
+        stroke="white"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M18 16v2a1 1 0 0 1-1 1H6l6-7l-6-7h11a1 1 0 0 1 1 1v2"
+      /></svg
+    >' %} {% include 'components/course_card.html' %}
+    <!-- Card 2 -->
+    {% set title='Física Mecánica' %} {% set code='FIS111' %} {% set
+    certamenes=true %} {% set laboratorio=true %} {% set
+    icon_gradient='linear-gradient(135deg, #10b981 0%, #059669 100%)' %} {% set
+    icon_svg='<svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="48"
+      height="48"
+      viewBox="0 0 24 24"
+    >
+      <g
+        fill="none"
+        stroke="white"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+      >
+        <path
+          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37c1 .608 2.296.07 2.572-1.065z"
+        />
+        <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0-6 0" />
+      </g></svg
+    >' %} {% include 'components/course_card.html' %}
+    <!-- Card 3 -->
+    {% set title='Introducción a la Programación' %} {% set code='INF129' %} {%
+    set certamenes=true %} {% set tareas=true %} {% set proyecto=true %} {% set
+    icon_gradient='linear-gradient(135deg, #0d9488 0%, #0f766e 100%)' %} {% set
+    icon_svg='<svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="48"
+      height="48"
+      viewBox="0 0 24 24"
+    >
+      <path
+        fill="none"
+        stroke="white"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="m7 8l-4 4l4 4m10-8l4 4l-4 4M14 4l-4 16"
+      /></svg
+    >' %} {% include 'components/course_card.html' %}
+    <!-- Card 4 -->
+    {% set title='Química Básica' %} {% set code='QUI021' %} {% set
+    certamenes=true %} {% set laboratorio=true %} {% set controles=true %} {%
+    set icon_gradient='linear-gradient(135deg, #ea580c 0%, #c2410c 100%)' %} {%
+    set icon_svg='<svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="48"
+      height="48"
+      viewBox="0 0 24 24"
+    >
+      <g
+        fill="none"
+        stroke="white"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+      >
+        <path
+          d="M12 12v.01m7.071-7.081c-1.562-1.562-6 .337-9.9 4.243c-3.905 3.905-5.804 8.337-4.242 9.9c1.562 1.561 6-.338 9.9-4.244c3.905-3.905 5.804-8.337 4.242-9.9"
+        />
+        <path
+          d="M4.929 4.929c-1.562 1.562.337 6 4.243 9.9c3.905 3.905 8.337 5.804 9.9 4.242c1.561-1.562-.338-6-4.244-9.9c-3.905-3.905-8.337-5.804-9.9-4.242"
+        />
+      </g></svg
+    >' %} {% include 'components/course_card.html' %}
+    <!-- Card 5 -->
+    {% set title='Álgebra Lineal' %} {% set code='MAT061' %} {% set
+    certamenes=true %} {% set controles=true %} {% set
+    icon_gradient='linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)' %} {% set
+    icon_svg='<svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="48"
+      height="48"
+      viewBox="0 0 24 24"
+    >
+      <path
+        fill="none"
+        stroke="white"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M8 16h.013m3.997 0h.005m4 0h.005m-.005-4h.005m-8.01 0h.005m3.995 0h.005m4.005-4h.005m-8.01 0h.005m3.995 0h.005M7 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h1M17 4h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-1"
+      /></svg
+    >' %} {% include 'components/course_card.html' %}
+    <!-- Card 6 -->
+    {% set title='Matemáticas III' %} {% set code='MAT023' %} {% set
+    certamenes=true %} {% set controles=true %} {% set
+    icon_gradient='linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)' %} {% set
+    icon_svg='<svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="48"
+      height="48"
+      viewBox="0 0 24 24"
+    >
+      <path
+        fill="none"
+        stroke="white"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3 19a2 2 0 0 0 2 2c2 0 2-4 3-9s1-9 3-9a2 2 0 0 1 2 2m-2 14a2 2 0 0 0 2 2c2 0 2-4 3-9s1-9 3-9a2 2 0 0 1 2 2"
+      /></svg
+    >' %} {% include 'components/course_card.html' %}
+  </div>
+</section>
+{% endblock %}

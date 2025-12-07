@@ -1,0 +1,22 @@
+<div class="course-card">
+  <div class="course-icon" style="background: {{ icon_gradient }};">
+    {{ icon_svg|safe }}
+  </div>
+  <div class="course-info">
+    <h3 class="course-title">{{ title }}</h3>
+    <p class="course-code">{{ code }}</p>
+    <div class="course-meta">
+      {% if certamenes %}
+      <span class="meta-item">Certámenes</span>
+      {% endif %} {% if controles %}
+      <span class="meta-item">Controles</span>
+      {% endif %} {% if tareas %}
+      <span class="meta-item">Tareas</span>
+      {% endif %} {% if proyecto %}
+      <span class="meta-item">Proyecto</span>
+      {% endif %} {% if laboratorio %}
+      <span class="meta-item">Laboratorio</span>
+      {% endif %}
+    </div>
+  </div>
+</div>
