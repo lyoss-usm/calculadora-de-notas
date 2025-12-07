@@ -1,6 +1,6 @@
-from cursos.curso import Curso
+from core.cursos import Curso
 import numpy as np
-import config
+from core.utils import AppConfig
 import matplotlib.pyplot as plt
 
 
@@ -12,7 +12,7 @@ def get_sample(curso: Curso):
     :param curso: Curso al que se le generará la muestra.
     :return: Un array de numpy con las muestras generadas.
     """
-    cfg = config.Config()
+    cfg = AppConfig()
     n = cfg.get("n_samples", 1000)
 
     notas = curso.get_notas()

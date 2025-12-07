@@ -1,8 +1,8 @@
 import os
 import webbrowser
 import numpy as np
-from cursos.curso import Curso
-from config import Config
+from core.cursos import Curso
+from core.utils import AppConfig
 import matplotlib.pyplot as plt
 from numpy.ma.core import masked
 import plotly.graph_objects as go
