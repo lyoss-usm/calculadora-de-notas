@@ -1,2 +1,0 @@
-# Ignore Jinja2 templates (they don't format well with Prettier)
-app/templates/**/*.html
