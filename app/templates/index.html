@@ -1,5 +1,13 @@
-{% extends "layouts/base.html" %} {% block title %}Calculadora de Notas -
-Inicio{% endblock %} {% block content %}
+{% extends "layouts/base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}" />
+{% endblock %}
+
+{% block title %}Calculadora de Notas - Inicio{% endblock %}
+
+{% block content %}
 <section class="hero-section">
   <div class="hero-content">
     <div class="hero-badge">🎓 De estudiantes para estudiantes</div>
@@ -42,7 +50,7 @@ Inicio{% endblock %} {% block content %}
 
   <div class="courses-grid">
     <!-- Card 1 -->
-    {% set title='Matemáticas I' %} {% set code='MAT021' %} {% set
+    {% set title='Matemáticas I' %} {% set code='MAT-101' %} {% set
     certamenes=true %} {% set controles=true %} {% set
     icon_gradient='linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' %} {% set
     icon_svg='<svg
@@ -61,7 +69,7 @@ Inicio{% endblock %} {% block content %}
       /></svg
     >' %} {% include 'components/course_card.html' %}
     <!-- Card 2 -->
-    {% set title='Física Mecánica' %} {% set code='FIS111' %} {% set
+    {% set title='Física Mecánica' %} {% set code='FIS-110' %} {% set
     certamenes=true %} {% set laboratorio=true %} {% set
     icon_gradient='linear-gradient(135deg, #10b981 0%, #059669 100%)' %} {% set
     icon_svg='<svg

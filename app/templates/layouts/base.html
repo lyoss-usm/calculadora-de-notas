@@ -10,14 +10,14 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/color.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
     {% block extra_css %}{% endblock %}
   </head>
   <body>
+    {% block navbar %}
     {% include 'layouts/navbar.html' %}
+    {% endblock %}
 
     <main>{% block content %}{% endblock %}</main>
 
