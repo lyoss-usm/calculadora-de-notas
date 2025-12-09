@@ -18,10 +18,10 @@ def create_app(config_name='default'):
     """
     app = Flask(__name__)
     
-    #  flask
+    # Configuración de Flask
     app.config.from_object(config[config_name])
     
-    # blueprints
+    # Registro de blueprints
     from app.routes import bp
     app.register_blueprint(bp)
     
