@@ -6,18 +6,15 @@ import os
 import sys
 from app import create_app
 
-# Detectamos el entorno (default: 'development')
 env = os.getenv('FLASK_ENV', 'development')
 app = create_app(env)
 
 if __name__ == '__main__':
     try:
-        # Configuración de red
         host = '0.0.0.0'
         port = int(os.environ.get('PORT', 5000))
         pid = os.getpid()
 
-        # Logs técnicos de inicio
         print("-" * 60)
         print(f"Server Process ID (PID): {pid}")
         print(f"Environment: {env.upper()}")

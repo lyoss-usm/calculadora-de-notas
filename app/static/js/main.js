@@ -1,5 +1,3 @@
-// JavaScript para la Calculadora de Notas
-
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Calculadora de Notas - Frontend cargado');
     
