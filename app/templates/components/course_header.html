@@ -1,0 +1,43 @@
+{% from "components/icons.html" import back_arrow, chevron_down %}
+
+{# Course Header Component #}
+{% macro course_header(course_name, course_code, icon_gradient, icon_svg) %}
+<div class="course-header">
+  <div class="course-header-content">
+    <div class="course-header-row">
+      <div class="course-header-left">
+        <a href="/" class="back-link">
+          {{ back_arrow() }}
+          Volver a cursos
+        </a>
+        <div class="course-header-info">
+          <div class="course-header-icon" style="background: {{ icon_gradient }};">
+            {{ icon_svg|safe }}
+          </div>
+          <div>
+            <h1 class="course-header-title">{{ course_name }}</h1>
+            <p class="course-header-code">{{ course_code }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="course-header-right">
+        <div class="meta-toggle-group">
+          <button class="meta-toggle active">Básico</button>
+          <button class="meta-toggle">Avanzado</button>
+        </div>
+        <div class="meta-goal">
+          <span class="meta-goal-label">Meta:</span>
+          <input
+            type="number"
+            class="meta-goal-input"
+            value="55"
+            min="10"
+            max="100"
+            step="1"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
