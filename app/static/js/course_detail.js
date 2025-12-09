@@ -47,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   evaluationInputs.forEach((input) => {
     input.addEventListener("input", function () {
-      // TODO: Add calculation logic when backend is connected
       console.log("Input changed:", this.value);
     });
   });
