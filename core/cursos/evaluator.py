@@ -54,6 +54,10 @@ multiplicacion = lambda node, args, ctx: np.prod(np.array(args))
 #####################################################
 mean = lambda node, args, ctx: np.mean(np.array(args))
 
+def linear_combination(node, args, ctx):
+    weights = np.array(node['weights'])
+    values = np.array(args)
+    return np.dot(weights, values)
 
 OPS = {
     # OBTENER VALORES
@@ -61,7 +65,7 @@ OPS = {
     'array': array,
 
     'ref': ref,
-    'refs_by_template': refs_by_template,
+    'ref_template': refs_by_template,
 
     # CONDICIONAL
     'if': cond,
@@ -81,7 +85,8 @@ OPS = {
     'add': suma,
 
     # OPERACIONES COMPUESTAS
-    'mean': mean
+    'mean': mean,
+    'linear_comb': linear_combination,
 }
 
 def eval_node(node, context):

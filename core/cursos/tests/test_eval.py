@@ -32,7 +32,7 @@ def test_ref():
     assert eval_node(node, CTX) == 72.0
 
 def test_refs_by_template():
-    node = {"op": "refs_by_template", "template": "control"}
+    node = {"op": "ref_template", "template": "control"}
     out = eval_node(node, CTX)
     assert isinstance(out, np.ndarray)
     assert np.allclose(out, [55.0, 60.0, 48.0])
@@ -56,7 +56,7 @@ def test_add_mul_chain():
 
 def test_mean_controls():
     ast = {"op":"mean", "args":[
-        {"op":"refs_by_template", "template":"control"}
+        {"op":"ref_template", "template":"control"}
     ]}
     assert np.isclose(eval_node(ast, CTX), (55+60+48)/3)
 
@@ -65,7 +65,7 @@ def test_sort_slice_best2():
         "op":"slice",
         "args":[
             {"op":"sort","args":[
-                {"op":"refs_by_template","template":"control"}
+                {"op":"ref_template","template":"control"}
             ]},
             {"op":"const","value":-2}
         ]
@@ -97,7 +97,7 @@ def test_full_formula():
                     {
                         "op":"mean",
                         "args":[
-                            {"op":"refs_by_template","template":"control"}
+                            {"op":"ref_template","template":"control"}
                         ]
                     }
                 ]
