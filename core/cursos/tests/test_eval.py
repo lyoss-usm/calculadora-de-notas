@@ -7,15 +7,15 @@ from ..evaluator import eval_node
 # ----------------------------------------------------------------------
 
 CTX = {
-    "values": {
-        "cert_1": 72.0,
-        "ctrl_1": 55.0,
-        "ctrl_2": 60.0,
-        "ctrl_3": 48.0
-    },
+    "values": [
+        72.0,
+        55.0,
+        60.0,
+        48.0
+    ],
     "templates": {
-        "certamen": ["cert_1"],
-        "control": ["ctrl_1", "ctrl_2", "ctrl_3"]
+        "certamen": [0],
+        "control": [1,2,3]
     }
 }
 
@@ -28,7 +28,7 @@ def test_const():
     assert eval_node(node, CTX) == 3.5
 
 def test_ref():
-    node = {"op": "ref", "id": "cert_1"}
+    node = {"op": "ref", "id": 0}
     assert eval_node(node, CTX) == 72.0
 
 def test_refs_by_template():
@@ -87,7 +87,7 @@ def test_full_formula():
                 "op":"mul",
                 "args":[
                     {"op":"const","value":0.6},
-                    {"op":"ref","id":"cert_1"}
+                    {"op":"ref","id":0}
                 ]
             },
             {
@@ -117,7 +117,7 @@ def test_conditional_then():
         "cond":{
             "op":"lt",
             "args":[
-                {"op":"ref","id":"cert_1"},
+                {"op":"ref","id":0},
                 {"op":"const","value":100}
             ]
         },
@@ -132,7 +132,7 @@ def test_conditional_else():
         "cond":{
             "op":"lt",
             "args":[
-                {"op":"ref","id":"cert_1"},
+                {"op":"ref","id":0},
                 {"op":"const","value":10}
             ]
         },

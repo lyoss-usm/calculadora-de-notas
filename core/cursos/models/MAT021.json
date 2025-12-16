@@ -1,28 +1,18 @@
 {
   "context": {
-    "values": {
-      "cert_1": null,
-      "cert_2": null,
-      "cert_3": null,
-      "ctrl_1": null,
-      "ctrl_2": null,
-      "ctrl_3": null,
-      "ctrl_4": null,
-      "ctrl_5": null,
-      "ctrl_6": null
-    },
+    "values": [null, null, null, null, null, null, null, null, null],
     "templates": {
-      "certamen": ["cert_1", "cert_2", "cert_3"],
-      "control": ["ctrl_1", "ctrl_2", "ctrl_3", "ctrl_4", "ctrl_5", "ctrl_6"]
+      "certamen": [0, 1, 2],
+      "control": [3, 4, 5, 6, 7, 8]
     }
   },
   "AST": {
     "op": "linear_comb",
     "weights": [0.2, 0.25, 0.3, 0.25],
     "args": [
-      { "op": "ref", "id": "cert_1" },
-      { "op": "ref", "id": "cert_2" },
-      { "op": "ref", "id": "cert_3" },
+      { "op": "ref", "id": 0 },
+      { "op": "ref", "id": 1 },
+      { "op": "ref", "id": 2 },
       {
         "op": "mean",
         "args": [
