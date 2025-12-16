@@ -2,7 +2,6 @@
 """
 Módulo de análisis de notas.
 """
-from .roots import plot_notas, obtener_notas
-from .simulation import montecarlo, plot_histogram
+from .roots import find_nota_necesaria
 
-__all__ = ['plot_notas', 'obtener_notas', 'montecarlo', 'plot_histogram']
+__all__ = ['find_nota_necesaria']
