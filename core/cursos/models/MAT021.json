@@ -1,4 +1,12 @@
 {
+  "meta": {
+    "code": "MAT-021",
+    "name": "Cálculo I",
+    "icon": {
+      "gradient": "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+      "svg": "<svg>...</svg>"
+    }
+  },
   "evaluations": [
     "Certamen 1",
     "Certamen 2",
