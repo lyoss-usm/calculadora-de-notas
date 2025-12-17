@@ -43,3 +43,19 @@ def find_nota_necesaria(model, empty_evals, target_final):
         x0 = x1
 
     return x0
+
+def fill_empty_evals(model, empty_evals, nota):
+    '''
+    Llena las evaluaciones vacías con la nota proporcionada.
+
+    :param model: Diccionario que contiene el contexto de evaluación
+    :param empty_evals: Lista de índices de evaluaciones vacías
+    :param nota: Nota a asignar a las evaluaciones vacías
+    '''
+    ctx = model['context']
+    evals = np.array(ctx['values'])
+    evals[empty_evals] = nota
+    ctx['values'] = evals.tolist()
+
+    out = eval_node(model['AST'], ctx)
+    return out
