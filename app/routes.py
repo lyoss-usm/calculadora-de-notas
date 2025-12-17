@@ -5,7 +5,7 @@ Backend API routes will be added in future iterations.
 """
 from flask import Blueprint, render_template, abort, request, jsonify
 from core.cursos.repository import load_course
-from core.cursos.evaluador import eval_node
+from core.cursos.evaluator import eval_node
 
 bp = Blueprint('main', __name__)
 
