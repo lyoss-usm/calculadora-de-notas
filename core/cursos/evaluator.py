@@ -43,16 +43,38 @@ def slice(node, args, ctx):
 def sort(node, args, ctx):
     return np.sort(args[0])
 
+def k_best(node, args, ctx):
+    k = node['k']
+    array = np.array(args[0])
+    sorted_array = np.sort(array)[::-1]
+    return sorted_array[:k]
+
 #####################################################
 ############## OPERACIONES ELEMENTALES ##############
 #####################################################
 suma = lambda node, args, ctx: np.sum(np.array(args))
 multiplicacion = lambda node, args, ctx: np.prod(np.array(args))
 
+def power(node, args, ctx):
+    if len(args) == 1:
+        return np.power(args[0], node['exponent'])
+    else:
+        return np.power(args, node['exponent'])
+    
+def raiz(node, args, ctx):
+    if len(args) == 1:
+        return np.power(args[0], 1/node['exponent'])
+    else:
+        return np.power(args, 1/node['exponent'])
+
 #####################################################
 ############## OPERACIONES COMPUESTAS ###############
 #####################################################
 mean = lambda node, args, ctx: np.mean(np.array(args))
+
+def geometric_mean(node, args, ctx):
+    product = np.prod(np.array(args))
+    return product ** (1 / len(args))
 
 def linear_combination(node, args, ctx):
     weights = np.array(node['weights'])
@@ -79,13 +101,18 @@ OPS = {
     # INDEXACIÓN
     'slice': slice,
     'sort': sort,
+    'k_best': k_best,
 
     # OPERACIONES ELEMENTALES
     'mul': multiplicacion,
-    'add': suma,
+    'sum': suma,
+
+    'power': power,
+    'root': raiz,
 
     # OPERACIONES COMPUESTAS
     'mean': mean,
+    'geom_mean': geometric_mean,
     'linear_comb': linear_combination,
 }
 
