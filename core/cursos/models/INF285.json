@@ -1,43 +1,26 @@
-import numpy as np
-import pytest
-from ..evaluator import eval_node
-import json
-
-INF285_MODEL = json.load(open('../models/INF285.json'))
-
-def test_CC():
-	model = INF285_MODEL
-	ctx = model['context']
-	ctx['values'] = [51.0, 31.0, 54.0, 95.0, 40.0, 73.0, 100.0, 100.0, 90.0]
-	out = eval_node(model['AST'], ctx)
-	assert abs(out - 70.119501) < 1e-6
-
-def test_CC_kbest():
-	model = INF285_MODEL
-	ctx = model['context']
-	ctx['values'] = [51.0, 31.0, 54.0, 95.0, 40.0, 73.0, 100.0, 100.0, 90.0]
-	out = eval_node({
-		"op": "mean",
-		"args": [
-			{
-			"op": "k_best",
-			"k": 3,
-			"args": [
-				{
-					"op": "ref_template",
-					"template": "laboratorio"
-				}
-			]
-			}
-		]
-	  }, ctx)
-	assert abs(out - 98.333333) < 1e-6
-
-def test_CC_gamma():
-	model = INF285_MODEL
-	ctx = model['context']
-	ctx['values'] = [51.0, 31.0, 54.0, 95.0, 40.0, 73.0, 100.0, 100.0, 90.0]
-	out = eval_node({
+{
+  "evaluations": [
+    "Certamen 1",
+    "Certamen 2",
+    "Certamen 3",
+    "Laboratorio 1",
+    "Laboratorio 2",
+    "Laboratorio 3",
+    "Laboratorio 4",
+    "Laboratorio 5",
+    "Gamma"
+  ],
+  "context": {
+    "values": [null, null, null, null, null, null, null, null, null],
+    "templates": {
+      "certamen": [0, 1, 2],
+      "laboratorio": [3, 4, 5, 6, 7]
+    }
+  },
+  "AST": {
+    "op": "mul",
+    "args": [
+      {
         "op": "sum",
         "args": [
           {
@@ -58,14 +41,12 @@ def test_CC_gamma():
             ]
           }
         ]
-      }, ctx)
-	assert abs(out - 1.09) < 1e-6
-
-def test_CC_PC():
-	model = INF285_MODEL
-	ctx = model['context']
-	ctx['values'] = [51.0, 31.0, 54.0, 95.0, 40.0, 73.0, 100.0, 100.0, 90.0]
-	out = eval_node({
+      },
+      {
+        "op": "linear_comb",
+        "weights": [0.75, 0.25],
+        "args": [
+          {
             "op": "root",
             "exponent": 3,
             "args": [
@@ -100,5 +81,24 @@ def test_CC_PC():
                 ]
               }
             ]
-          }, ctx)
-	assert abs(out - 52.995312) < 1e-6
+          },
+          {
+            "op": "mean",
+            "args": [
+              {
+                "op": "k_best",
+                "k": 3,
+                "args": [
+                  {
+                    "op": "ref_template",
+                    "template": "laboratorio"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
