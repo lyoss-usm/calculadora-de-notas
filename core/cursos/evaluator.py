@@ -90,6 +90,13 @@ OPS = {
 }
 
 def eval_node(node, context):
+    '''
+    Evalúa un nodo del AST de evaluación.
+    
+    :param node: Nodo del AST a evaluar
+    :param context: Contexto de evaluación que incluye valores y plantillas
+    :return: Resultado de la evaluación del nodo
+    '''
     op = node['op']
     fn = OPS[op]
 
