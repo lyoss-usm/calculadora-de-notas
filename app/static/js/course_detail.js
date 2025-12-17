@@ -44,10 +44,57 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Auto-update calculations when inputs change
   const evaluationInputs = document.querySelectorAll(".evaluation-input");
+  const courseContent = document.querySelector(".course-content");
+  const courseCode = courseContent ? courseContent.dataset.courseCode : null;
+
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  const saveGrades = debounce(function () {
+    if (!courseCode) return;
+
+    const grades = [];
+    const filled = [];
+
+    evaluationInputs.forEach((input) => {
+      const val = input.value;
+      if (val === "") {
+        grades.push(null);
+        filled.push(false);
+      } else {
+        grades.push(parseFloat(val));
+        filled.push(true);
+      }
+    });
+
+    fetch(`/api/grades/${courseCode}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ grades, filled }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Grades saved:", data);
+      })
+      .catch((error) => {
+        console.error("Error saving grades:", error);
+      });
+  }, 1000);
 
   evaluationInputs.forEach((input) => {
     input.addEventListener("input", function () {
-      console.log("Input changed:", this.value);
+      saveGrades();
     });
   });
 
