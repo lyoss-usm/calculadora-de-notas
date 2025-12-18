@@ -14,7 +14,7 @@ def find_nota_necesaria(model, empty_evals, target_final):
     '''
     AST = model['AST']
     ctx = model['context']
-    evals = np.array(ctx['values'])
+    evals = np.array(ctx['values'], dtype=np.float64)
 
     def f(nota):
         evals[empty_evals] = nota
@@ -36,7 +36,7 @@ def find_nota_necesaria(model, empty_evals, target_final):
         derivative = (f_x0_h - f_x0) / h
         
         if derivative == 0:
-            return None
+            derivative = 1e-6  # Evitar división por cero
         
         x1 = x0 - f_x0 / derivative
         
