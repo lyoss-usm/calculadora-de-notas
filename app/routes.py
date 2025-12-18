@@ -5,7 +5,8 @@ Backend API routes will be added in future iterations.
 """
 from flask import Blueprint, render_template, abort, request, jsonify
 from core.cursos.repository import load_course
-from core.cursos.evaluator import eval_node
+from core.analisis.roots import find_nota_necesaria, fill_empty_evals
+import json
 
 bp = Blueprint('main', __name__)
 
@@ -36,32 +37,72 @@ def course_detail(course_code):
 
 @bp.route("/api/grades/<course_code>", methods=["POST"])
 def save_grades(course_code):
+    '''
+    Requests JSON with:
+    ```
+    {
+        "goal": float,
+        "grades": [float],
+        "filled": [bool]
+    }
+    ```
+
+    Returns JSON with:
+    ```
+    {
+        "success": bool,
+        "message": str,
+        "current_grade": float,
+        "max_grade": float,
+        "needed_grade": float or "--"
+    }
+    ```
+    '''
     data = request.get_json()
+
+    goal = data.get("goal", 55.0)
     grades = data.get("grades", [])
-    
+    filled = data.get("filled", [])
+
+    empty_vals = [i for i in range(len(grades)) if not filled[i]]
+
     try:
         course = load_course(course_code)
     except KeyError:
-        return jsonify({"status": "error", "message": "Curso no encontrado"}), 404
+        return jsonify({"error": "Curso no encontrado"}), 404
+    ctx = course["context"]
+    ctx["values"] = grades
+
+    out = {
+        "success": True,
+        "message": "",
+
+        "current_grade": 0.0,
+        "max_grade": 0.0,
+        "needed_grade": 0.0
+    }
+
+    nota_necesaria = find_nota_necesaria(course, empty_vals, goal)
+
+    if nota_necesaria > 100.0:
+        out["message"] = "No es posible alcanzar la nota objetivo con las evaluaciones restantes."
+        out["success"] = False
+        out["needed_grade"] = "--"
+
+    out["needed_grade"] = round(nota_necesaria) if 0.0 <= nota_necesaria else 0.0
+    current_grade = fill_empty_evals(course, empty_vals, 0.0)
+    max_grade = fill_empty_evals(course, empty_vals, 100.0)
+
+    out["current_grade"] = round(current_grade)
+    out["max_grade"] = round(max_grade)
+
+    # Print out in JSON format
+    print(json.dumps(out, indent=4, ensure_ascii=False))
     
-    current_grades = [g if g is not None else 0 for g in grades]
-    context_current = {"notas": current_grades}
-    current_grade = eval_node(course["formula"], context_current)
+    return jsonify(out)
+
+
     
-    max_grades = [g if g is not None else 100 for g in grades]
-    context_max = {"notas": max_grades}
-    max_achievable = eval_node(course["formula"], context_max)
-    
-    min_grades = [g if g is not None else 0 for g in grades]
-    context_min = {"notas": min_grades}
-    min_achievable = eval_node(course["formula"], context_min)
-    
-    return jsonify({
-        "status": "success",
-        "current": round(current_grade, 1),
-        "max_achievable": round(max_achievable, 1),
-        "min_achievable": round(min_achievable, 1)
-    })
 
 
 
