@@ -37,9 +37,31 @@ def course_detail(course_code):
 @bp.route("/api/grades/<course_code>", methods=["POST"])
 def save_grades(course_code):
     data = request.get_json()
-    print(f"Notas de {course_code} recibidas: {data}")
-
-    return jsonify({"status": "success", "message": f"Notas de {course_code} recibidas."})
+    grades = data.get("grades", [])
+    
+    try:
+        course = load_course(course_code)
+    except KeyError:
+        return jsonify({"status": "error", "message": "Curso no encontrado"}), 404
+    
+    current_grades = [g if g is not None else 0 for g in grades]
+    context_current = {"notas": current_grades}
+    current_grade = eval_node(course["formula"], context_current)
+    
+    max_grades = [g if g is not None else 100 for g in grades]
+    context_max = {"notas": max_grades}
+    max_achievable = eval_node(course["formula"], context_max)
+    
+    min_grades = [g if g is not None else 0 for g in grades]
+    context_min = {"notas": min_grades}
+    min_achievable = eval_node(course["formula"], context_min)
+    
+    return jsonify({
+        "status": "success",
+        "current": round(current_grade, 1),
+        "max_achievable": round(max_achievable, 1),
+        "min_achievable": round(min_achievable, 1)
+    })
 
 
 
