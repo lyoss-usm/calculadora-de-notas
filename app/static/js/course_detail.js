@@ -63,16 +63,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!courseCode) return;
 
     const grades = [];
-    const filled = [];
 
     evaluationInputs.forEach((input) => {
       const val = input.value;
       if (val === "") {
         grades.push(null);
-        filled.push(false);
       } else {
         grades.push(parseFloat(val));
-        filled.push(true);
       }
     });
 
@@ -81,11 +78,21 @@ document.addEventListener("DOMContentLoaded", function () {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ grades, filled }),
+      body: JSON.stringify({ grades }),
     })
       .then((response) => response.json())
-      .then((data) => {
-        console.log("Grades saved:", data);
+      .then((res) => {
+        console.log("Calculation results:", res);
+
+        const currentEl = document.querySelector("#current-grade");
+        if (currentEl && res.current !== undefined) {
+          currentEl.innerText = res.current.toFixed(1);
+        }
+
+        const maxEl = document.querySelector("#max-grade");
+        if (maxEl && res.max_achievable !== undefined) {
+          maxEl.innerText = res.max_achievable.toFixed(1);
+        }
       })
       .catch((error) => {
         console.error("Error saving grades:", error);
@@ -93,8 +100,40 @@ document.addEventListener("DOMContentLoaded", function () {
   }, 1000);
 
   evaluationInputs.forEach((input) => {
-    input.addEventListener("input", function () {
+    input.addEventListener("input", function (e) {
+      let value = this.value;
+
+      value = value.replace(/[^0-9.]/g, "");
+
+      const parts = value.split(".");
+      if (parts.length > 2) {
+        value = parts[0] + "." + parts.slice(1).join("");
+      }
+
+      if (parts.length === 2) {
+        value = parts[0].slice(0, 2) + "." + parts[1].slice(0, 1);
+      } else {
+        value = value.slice(0, 2);
+      }
+
+      if (value !== "" && !value.endsWith(".")) {
+        const numValue = parseFloat(value);
+        if (numValue > 100) {
+          value = "100";
+        } else if (numValue < 0) {
+          value = "0";
+        }
+      }
+
+      this.value = value;
       saveGrades();
+    });
+
+    input.addEventListener("keypress", function (e) {
+      const char = String.fromCharCode(e.which);
+      if (!/[0-9.]/.test(char) && e.which !== 8 && e.which !== 46) {
+        e.preventDefault();
+      }
     });
   });
 
