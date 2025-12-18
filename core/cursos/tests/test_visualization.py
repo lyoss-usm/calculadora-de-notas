@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from ..visualization import print_node
+from ..visualization import print_AST
 
 # ----------------------------------------------------------------------
 # Contexto base
@@ -11,11 +11,13 @@ CTX = {
         "Certamen 1",
         "Control 1",
         "Control 2",
+        "Control 3",
         "Laboratorio"
     ],
     "values": [
         72.0,
         55.0,
+        60.0,
         60.0,
         48.0
     ],
@@ -31,21 +33,33 @@ CTX = {
 
 def test_const():
     node = {"op": "const", "value": 3.5}
-    assert print_node(node, CTX) == "3.5"
+    out = print_AST(node, CTX)
+    print( out )
+    assert out == "3.5"
 
 def test_array():
     node = {"op": "array", "value": [1,2,3]}
-    assert print_node(node, CTX) == "[1, 2, 3]"
+    out = print_AST(node, CTX)
+    print( out )
+    assert out == ["1", "2", "3"]
 
-'''def test_ref():
+def test_ref():
     node = {"op": "ref", "id": 0}
-    assert print_node(node, CTX) == 72.0
+    out = print_AST(node, CTX)
+    print( out )
+    assert out == "C_1"
+
+def test_ref_2():
+    node = {"op": "ref", "id": 4}
+    out = print_AST(node, CTX)
+    print( out )
+    assert out == "L"
 
 def test_refs_by_template():
     node = {"op": "ref_template", "template": "control"}
-    out = print_node(node, CTX)
-    assert isinstance(out, np.ndarray)
-    assert np.allclose(out, [55.0, 60.0, 48.0])
+    out = print_AST(node, CTX)
+    print( out )
+    assert out == ["C_1", "C_2", "C_3"]
 
 def test_add_mul_chain():
     ast = {
@@ -58,7 +72,9 @@ def test_add_mul_chain():
             {"op": "const", "value": 4}
         ]
     }
-    assert print_node(ast, CTX) == 10
+    out = print_AST(ast, CTX)
+    print( out )
+    assert out == "2 \\cdot 3 + 4"
 
 # ----------------------------------------------------------------------
 # Tests vectoriales
@@ -68,25 +84,28 @@ def test_mean_controls():
     ast = {"op":"mean", "args":[
         {"op":"ref_template", "template":"control"}
     ]}
-    assert np.isclose(print_node(ast, CTX), (55+60+48)/3)
+    out = print_AST(ast, CTX)
+    print( out )
+    assert out == "\\left(\\frac{C_1 + C_2 + C_3}{3}\\right)"
+
 
 def test_sort_slice_best2():
     ast = {
         "op":"slice",
+        "index": -2,
         "args":[
             {"op":"sort","args":[
                 {"op":"ref_template","template":"control"}
             ]},
-            {"op":"const","value":-2}
         ]
     }
-    out = print_node(ast, CTX)
-    # controles: [55,60,48] -> sort asc: [48,55,60] -> últimos 2: [55,60]
-    assert np.allclose(out, [55, 60])
+    out = print_AST(ast, CTX)
+    print( out )
+    assert out == "(\\text{sort}(C_1, C_2, C_3))[-2:]"
 
 # ----------------------------------------------------------------------
 # Test de fórmula compuesta real
-# 0.6 * certamen + 0.4 * mean(controles)
+# 0.6 \cdot certamen + 0.4 \cdot mean(controles)
 # ----------------------------------------------------------------------
 
 def test_full_formula():
@@ -114,8 +133,10 @@ def test_full_formula():
             }
         ]
     }
-    expected = 0.6*72 + 0.4*((55+60+48)/3)
-    assert np.isclose(print_node(ast, CTX), expected)
+    expected = "0.6 \\cdot C_1 + 0.4 \\cdot \\left(\\frac{C_1 + C_2 + C_3}{3}\\right)"
+    out = print_AST(ast, CTX)
+    print( out )
+    assert out == expected
 
 # ----------------------------------------------------------------------
 # Tests de comparaciones y condicional
@@ -128,37 +149,26 @@ def test_conditional_then():
             "op":"lt",
             "args":[
                 {"op":"ref","id":0},
-                {"op":"const","value":100}
+                {"op":"const","value":80}
             ]
         },
         "then":{"op":"const","value":1},
         "else":{"op":"const","value":0}
     }
-    assert print_node(ast, CTX) == 1
+    expected = "\\begin{cases} 1 & \\text{si } C_1 < 80 \\\\ 0 & \\text{en otro caso} \\end{cases}"
+    out = print_AST(ast, CTX)
+    print( out )
+    assert out == expected
 
-def test_conditional_else():
-    ast = {
-        "op":"if",
-        "cond":{
-            "op":"lt",
-            "args":[
-                {"op":"ref","id":0},
-                {"op":"const","value":10}
-            ]
-        },
-        "then":{"op":"const","value":1},
-        "else":{"op":"const","value":0}
-    }
-    assert print_node(ast, CTX) == 0
+import json
 
-def test_slice_out_of_bounds():
-    ast = {
-        "op":"slice",
-        "args":[
-            {"op":"array","value":np.array([1,2,3])},
-            {"op":"const","value":10}
-        ]
-    }
-    out = print_node(ast, CTX)
-    assert len(out) == 0
-'''
+course = json.load(open("core/cursos/models/MAT021.json","r"))
+
+def test_course_full_formula():
+    ast = course["AST"]
+    CTX = course["context"]
+    CTX['evaluations'] = course["evaluations"]
+    out = print_AST(ast, CTX)
+    print( out )
+    expected = ""
+    assert out == expected
