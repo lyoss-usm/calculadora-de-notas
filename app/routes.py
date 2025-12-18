@@ -84,12 +84,12 @@ def save_grades(course_code):
 
     nota_necesaria = find_nota_necesaria(course, empty_vals, goal)
 
-    if nota_necesaria > 100.0:
+    if nota_necesaria is None or nota_necesaria > 100.0:
         out["message"] = "No es posible alcanzar la nota objetivo con las evaluaciones restantes."
         out["success"] = False
         out["needed_grade"] = "--"
-
-    out["needed_grade"] = round(nota_necesaria) if 0.0 <= nota_necesaria else 0.0
+    else:
+        out["needed_grade"] = round(nota_necesaria) if 0.0 <= nota_necesaria else 0.0
     current_grade = fill_empty_evals(course, empty_vals, 0.0)
     max_grade = fill_empty_evals(course, empty_vals, 100.0)
 
