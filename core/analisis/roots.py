@@ -14,7 +14,7 @@ def find_nota_necesaria(model, empty_evals, target_final, x0=None):
     '''
     AST = model['AST']
     ctx = model['context']
-    evals = np.array(ctx['values'])
+    evals = np.array(ctx['values'], dtype=np.float64)
 
     def f(nota):
         evals[empty_evals] = nota
