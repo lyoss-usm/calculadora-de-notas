@@ -104,16 +104,16 @@ OPS = {
     'k_best': k_best,
 
     # OPERACIONES ELEMENTALES
-    'mul': multiplicacion,
     'sum': suma,
+    'prod': multiplicacion,
 
     'power': power,
     'root': raiz,
 
     # OPERACIONES COMPUESTAS
     'mean': mean,
-    'geom_mean': geometric_mean,
     'linear_comb': linear_combination,
+    'geom_mean': geometric_mean,
 }
 
 def eval_node(node, context):

@@ -73,6 +73,9 @@ def slice(node, args, ctx):
 def sort(node, args, ctx):
     return "\\text{sort}(" + ", ".join(args) + ")"
 
+def k_best(node, args, ctx):
+    return "\\text{best}_" + str(node['k']) + "(" + ", ".join(args) + ")"
+
 #####################################################
 ############## OPERACIONES ELEMENTALES ##############
 #####################################################
@@ -83,6 +86,20 @@ def suma(node, args, ctx):
 def multiplicacion(node, args, ctx):
     out = " \\cdot ".join(args)
     return out
+
+def power(node, args, ctx):
+    if len(args) == 1:
+        return f"{args[0]}^{{{node['exponent']}}}"
+    else:
+        out = " , ".join(args)
+        return f"({out})^{{{node['exponent']}}}"
+
+def raiz(node, args, ctx):
+    if len(args) == 1:
+        return f"\\sqrt[{node['exponent']}]{{{args[0]}}}"
+    else:
+        out = " , ".join(args)
+        return f"\\sqrt[{node['exponent']}]{{({out})}}"
 
 #####################################################
 ############## OPERACIONES COMPUESTAS ###############
@@ -99,6 +116,11 @@ def linear_combination(node, args, ctx):
         prods.append(f"{w[i]} \\cdot {args[i]}")
     out = " + ".join(prods)
     return f"({out})"
+
+def geometric_mean(node, args, ctx):
+    prods = " \\cdot ".join(args)
+    n = str(len(args))
+    return f"\\sqrt[{n}]{{{prods}}}"
 
 OPS = {
     # OBTENER VALORES
@@ -120,14 +142,19 @@ OPS = {
     # INDEXACIÓN
     'slice': slice,
     'sort': sort,
+    'k_best': k_best,
 
     # OPERACIONES ELEMENTALES
-    'mul': multiplicacion,
-    'add': suma,
+    'sum': suma,
+    'prod': multiplicacion,
+
+    'power': power,
+    'root': raiz,
 
     # OPERACIONES COMPUESTAS
     'mean': mean,
     'linear_comb': linear_combination,
+    'geom_mean': geometric_mean,
 }
 
 def eval_node(node, context):
@@ -153,7 +180,7 @@ def eval_node(node, context):
 def print_AST(ast, context):
     out = eval_node(ast, context)
 
-    if out[0] == '(' and out[-1] == ')':
-        return out[1:-1]
+    '''if out[0] == '(' and out[-1] == ')':
+        return out[1:-1]'''
     
     return out

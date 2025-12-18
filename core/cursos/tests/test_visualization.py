@@ -63,9 +63,9 @@ def test_refs_by_template():
 
 def test_add_mul_chain():
     ast = {
-        "op": "add",
+        "op": "sum",
         "args": [
-            {"op": "mul", "args": [
+            {"op": "prod", "args": [
                 {"op":"const","value":2},
                 {"op":"const","value":3}
             ]},
@@ -110,17 +110,17 @@ def test_sort_slice_best2():
 
 def test_full_formula():
     ast = {
-        "op":"add",
+        "op":"sum",
         "args":[
             {
-                "op":"mul",
+                "op":"prod",
                 "args":[
                     {"op":"const","value":0.6},
                     {"op":"ref","id":0}
                 ]
             },
             {
-                "op":"mul",
+                "op":"prod",
                 "args":[
                     {"op":"const","value":0.4},
                     {
@@ -160,9 +160,62 @@ def test_conditional_then():
     print( out )
     assert out == expected
 
+'''
+'k_best': k_best,
+'power': power,
+'root': raiz,
+'geom_mean': geometric_mean,
+'''
+def test_k_best():
+    ast = {
+        "op":"k_best",
+        "k":2,
+        "args":[
+            {"op":"ref_template","template":"control"}
+        ]
+    }
+    out = print_AST(ast, CTX)
+    print( out )
+    assert out == "\\text{best}_2(C_1, C_2, C_3)"
+
+def test_power_root():
+    ast_power = {
+        "op":"power",
+        "exponent":3,
+        "args":[
+            {"op":"ref","id":0}
+        ]
+    }
+    out_power = print_AST(ast_power, CTX)
+    print( out_power )
+    assert out_power == "C_1^{3}"
+
+    ast_root = {
+        "op":"root",
+        "exponent":4,
+        "args":[
+            {"op":"ref","id":0}
+        ]
+    }
+    out_root = print_AST(ast_root, CTX)
+    print( out_root )
+    assert out_root == "\\sqrt[4]{C_1}"
+
+def test_geometric_mean():
+    ast = {
+        "op":"geom_mean",
+        "args":[
+            {"op":"ref_template","template":"control"}
+        ]
+    }
+    out = print_AST(ast, CTX)
+    print( out )
+    assert out == "\\sqrt[3]{C_1 \\cdot C_2 \\cdot C_3}"
+
+
 import json
 
-course = json.load(open("core/cursos/models/MAT021.json","r"))
+course = json.load(open("core/cursos/models/INF285.json","r"))
 
 def test_course_full_formula():
     ast = course["AST"]

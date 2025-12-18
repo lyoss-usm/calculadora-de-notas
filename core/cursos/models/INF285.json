@@ -1,4 +1,12 @@
 {
+  "meta": {
+    "code": "INF285",
+    "name": "Computación Científica",
+    "icon": {
+      "gradient": "linear-gradient(135deg, #32a852 0%, #21803b 100%)",
+      "svg": "<svg>...</svg>"
+    }
+  },
   "evaluations": [
     "Certamen 1",
     "Certamen 2",
@@ -18,7 +26,7 @@
     }
   },
   "AST": {
-    "op": "mul",
+    "op": "prod",
     "args": [
       {
         "op": "sum",
@@ -28,7 +36,7 @@
             "value": 1.0
           },
           {
-            "op": "mul",
+            "op": "prod",
             "args": [
               {
                 "op": "ref",
@@ -51,7 +59,7 @@
             "exponent": 3,
             "args": [
               {
-                "op": "mul",
+                "op": "prod",
                 "args": [
                   {
                     "op": "ref",
