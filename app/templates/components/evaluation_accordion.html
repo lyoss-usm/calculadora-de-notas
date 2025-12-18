@@ -16,12 +16,12 @@ evaluation_accordion(title, icon_type='exam') %}
     <div class="evaluation-input-group">
       <label class="evaluation-label">Nota obtenida</label>
       <input
-        type="number"
+        type="text"
         class="evaluation-input"
         placeholder="0.0"
-        min="0"
-        max="100"
-        step="1"
+        inputmode="decimal"
+        pattern="[0-9]*\.?[0-9]?"
+        maxlength="4"
       />
     </div>
   </div>
