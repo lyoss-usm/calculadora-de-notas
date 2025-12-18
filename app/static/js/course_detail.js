@@ -47,6 +47,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const courseContent = document.querySelector(".course-content");
   const courseCode = courseContent ? courseContent.dataset.courseCode : null;
 
+  evaluationInputs.forEach((input) => {
+    input.value = "";
+    input.setAttribute("autocomplete", "off");
+  });
+
   function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -63,35 +68,60 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!courseCode) return;
 
     const grades = [];
+    const filled = [];
+    let filledCount = 0;
 
     evaluationInputs.forEach((input) => {
-      const val = input.value;
+      const val = input.value.trim();
       if (val === "") {
-        grades.push(null);
+        grades.push(0);
+        filled.push(false);
       } else {
         grades.push(parseFloat(val));
+        filled.push(true);
+        filledCount++;
       }
     });
+
+    const totalEvaluations = evaluationInputs.length;
+    const progress =
+      totalEvaluations > 0
+        ? Math.round((filledCount / totalEvaluations) * 100)
+        : 0;
 
     fetch(`/api/grades/${courseCode}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ grades }),
+      body: JSON.stringify({ grades, filled, goal: 55 }),
     })
       .then((response) => response.json())
       .then((res) => {
         console.log("Calculation results:", res);
 
         const currentEl = document.querySelector("#current-grade");
-        if (currentEl && res.current !== undefined) {
-          currentEl.innerText = res.current.toFixed(1);
+        if (currentEl && res.current_grade !== undefined) {
+          currentEl.innerText = res.current_grade;
         }
 
-        const maxEl = document.querySelector("#max-grade");
-        if (maxEl && res.max_achievable !== undefined) {
-          maxEl.innerText = res.max_achievable.toFixed(1);
+        const neededEl = document.querySelector("#max-grade");
+        if (neededEl) {
+          if (res.needed_grade === "--" && res.max_grade >= 55) {
+            neededEl.innerText = "Posible";
+            neededEl.style.fontSize = "2rem";
+          } else if (res.needed_grade === "--") {
+            neededEl.innerText = "--";
+            neededEl.style.fontSize = "3rem";
+          } else {
+            neededEl.innerText = res.needed_grade;
+            neededEl.style.fontSize = "3rem";
+          }
+        }
+
+        const progressEl = document.querySelector(".chart-placeholder-label");
+        if (progressEl) {
+          progressEl.innerText = `Avance: ${progress}%`;
         }
       })
       .catch((error) => {
@@ -103,25 +133,18 @@ document.addEventListener("DOMContentLoaded", function () {
     input.addEventListener("input", function (e) {
       let value = this.value;
 
-      value = value.replace(/[^0-9.]/g, "");
+      value = value.replace(/[^0-9]/g, "");
 
-      const parts = value.split(".");
-      if (parts.length > 2) {
-        value = parts[0] + "." + parts.slice(1).join("");
+      if (value.length > 3) {
+        value = value.slice(0, 3);
       }
 
-      if (parts.length === 2) {
-        value = parts[0].slice(0, 2) + "." + parts[1].slice(0, 1);
-      } else {
-        value = value.slice(0, 2);
-      }
-
-      if (value !== "" && !value.endsWith(".")) {
-        const numValue = parseFloat(value);
+      if (value !== "") {
+        const numValue = parseInt(value);
         if (numValue > 100) {
           value = "100";
-        } else if (numValue < 0) {
-          value = "0";
+        } else if (numValue < 1 && value !== "") {
+          value = "1";
         }
       }
 
@@ -131,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     input.addEventListener("keypress", function (e) {
       const char = String.fromCharCode(e.which);
-      if (!/[0-9.]/.test(char) && e.which !== 8 && e.which !== 46) {
+      if (!/[0-9]/.test(char) && e.which !== 8) {
         e.preventDefault();
       }
     });
