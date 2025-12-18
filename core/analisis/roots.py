@@ -1,6 +1,5 @@
 import numpy as np
 from ..cursos.evaluator import eval_node
-from .utils import get_chebyshev_nodes
 
 def find_nota_necesaria(model, empty_evals, target_final, x0=None):
     '''
