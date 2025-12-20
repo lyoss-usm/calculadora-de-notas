@@ -143,8 +143,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const numValue = parseInt(value);
         if (numValue > 100) {
           value = "100";
-        } else if (numValue < 1 && value !== "") {
-          value = "1";
+        } else if (numValue < 0 && value !== "") {
+          value = "0";
         }
       }
 
