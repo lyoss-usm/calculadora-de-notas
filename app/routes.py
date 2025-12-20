@@ -68,12 +68,22 @@ def course_detail(course_code):
 
     meta = course["meta"]
 
+    icon = meta.get("icon", {}) or {}
+    icon_file = icon.get("svg", "book")
+
+    try:
+        with open(f"app/static/svg/{icon_file}.svg", "r", encoding="utf-8") as f:
+            icon_svg = f.read()
+    except FileNotFoundError:
+        with open(f"app/static/svg/book.svg", "r", encoding="utf-8") as f:
+            icon_svg = f.read()
+
     return render_template(
         "course_detail.html",
         course_name=meta["name"],
         course_code=meta["code"],
         icon_gradient=meta["icon"]["gradient"],
-        icon_svg=meta["icon"]["svg"],
+        icon_svg=icon_svg,
         model=course
     )
 
