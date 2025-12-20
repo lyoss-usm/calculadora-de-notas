@@ -1,4 +1,12 @@
 {
+  "meta": {
+    "code": "INF-285",
+    "name": "Computación Científica",
+    "icon": {
+      "gradient": "linear-gradient(135deg, #2ea332 0%, #1c8a27 100%)",
+      "svg": "<svg>...</svg>"
+    }
+  },
   "evaluations": [
     "Certamen 1",
     "Certamen 2",
