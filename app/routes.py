@@ -4,17 +4,60 @@ Frontend-only routes for the landing page.
 Backend API routes will be added in future iterations.
 """
 from flask import Blueprint, render_template, abort, request, jsonify
-from core.cursos.repository import load_course
+from core.cursos.repository import load_course, list_courses
 from core.analisis.roots import find_nota_necesaria, fill_empty_evals
 import json
+import typing
 
 bp = Blueprint('main', __name__)
 
 
 @bp.route('/')
 def index():
-    """Landing page with hero section and popular courses."""
-    return render_template('index.html')
+    """Landing page with hero section and courses list."""
+    raw = list_courses(n=10)
+
+    courses = []
+    for c in raw:
+        meta = c.get("meta", {}) or {}
+        title = meta.get("name") or c.get("name") or "Sin nombre"
+        code = meta.get("code") or "XXX-000"
+        icon = meta.get("icon", {}) or {}
+        icon_gradient = icon.get("gradient", "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)")
+        icon_file = icon.get("svg", "book")
+
+        # Load SVG content from static files
+        try:
+            with open(f"app/static/svg/{icon_file}.svg", "r", encoding="utf-8") as f:
+                icon_svg = f.read()
+        except FileNotFoundError:
+            with open(f"app/static/svg/book.svg", "r", encoding="utf-8") as f:
+                icon_svg = f.read()
+
+        evals = c.get("evaluations", []) or []
+
+        # Heurísticas simples para detectar tipos de evaluación
+        evals_l = [str(e).strip().lower() for e in evals]
+        certamenes = any("certamen" in e or (len(e) > 0 and e[0] == "c") for e in evals_l)
+        controles = any("control" in e or e.startswith("q") or e.startswith("ca") for e in evals_l)
+        tareas = any("tarea" in e or e.startswith("t") for e in evals_l)
+        proyecto = any("proyecto" in e or e.startswith("p") for e in evals_l)
+        laboratorio = any("laboratorio" in e or e.startswith("l") for e in evals_l)
+
+        courses.append({
+            "title": title,
+            "code": code,
+            "icon_gradient": icon_gradient,
+            "icon_svg": icon_svg,
+            "certamenes": certamenes,
+            "controles": controles,
+            "tareas": tareas,
+            "proyecto": proyecto,
+            "laboratorio": laboratorio,
+        })
+
+    return render_template("index.html", courses=courses)
+
 
 @bp.route("/curso/<course_code>")
 def course_detail(course_code):
@@ -25,12 +68,22 @@ def course_detail(course_code):
 
     meta = course["meta"]
 
+    icon = meta.get("icon", {}) or {}
+    icon_file = icon.get("svg", "book")
+
+    try:
+        with open(f"app/static/svg/{icon_file}.svg", "r", encoding="utf-8") as f:
+            icon_svg = f.read()
+    except FileNotFoundError:
+        with open(f"app/static/svg/book.svg", "r", encoding="utf-8") as f:
+            icon_svg = f.read()
+
     return render_template(
         "course_detail.html",
         course_name=meta["name"],
         course_code=meta["code"],
         icon_gradient=meta["icon"]["gradient"],
-        icon_svg=meta["icon"]["svg"],
+        icon_svg=icon_svg,
         model=course
     )
 
@@ -102,7 +155,7 @@ def save_grades(course_code):
     return jsonify(out)
 
 
-    
+
 
 
 

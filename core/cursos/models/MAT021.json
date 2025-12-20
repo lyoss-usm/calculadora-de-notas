@@ -4,7 +4,7 @@
     "name": "Cálculo I",
     "icon": {
       "gradient": "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
-      "svg": "<svg>...</svg>"
+      "svg": "sumatoria"
     }
   },
   "evaluations": [
