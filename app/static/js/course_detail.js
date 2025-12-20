@@ -67,6 +67,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const saveGrades = debounce(function () {
     if (!courseCode) return;
 
+    // Get value from input with id "meta-goal-input"
+    const goalInput = document.getElementById("meta-goal-input");
+    const goalValue = goalInput ? parseFloat(goalInput.value) : 55.0;
+
     const grades = [];
     const filled = [];
     let filledCount = 0;
@@ -94,11 +98,16 @@ document.addEventListener("DOMContentLoaded", function () {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ grades, filled, goal: 55.0 }),
+      body: JSON.stringify({ grades, filled, goal: goalValue }),
     })
       .then((response) => response.json())
       .then((res) => {
         console.log("Calculation results:", res);
+
+        const goalEl = document.querySelector("#goal-grade");
+        if (goalEl) {
+          goalEl.innerText = goalValue.toString();
+        }
 
         const currentEl = document.querySelector("#current-grade");
         if (currentEl && res.current_grade !== undefined) {
