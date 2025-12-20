@@ -21,10 +21,18 @@ def index():
     for c in raw:
         meta = c.get("meta", {}) or {}
         title = meta.get("name") or c.get("name") or "Sin nombre"
-        code = meta.get("code") or ""
+        code = meta.get("code") or "XXX-000"
         icon = meta.get("icon", {}) or {}
         icon_gradient = icon.get("gradient", "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)")
-        icon_svg = icon.get("svg", "<svg></svg>")
+        icon_file = icon.get("svg", "book")
+
+        # Load SVG content from static files
+        try:
+            with open(f"app/static/svg/{icon_file}.svg", "r", encoding="utf-8") as f:
+                icon_svg = f.read()
+        except FileNotFoundError:
+            with open(f"app/static/svg/book.svg", "r", encoding="utf-8") as f:
+                icon_svg = f.read()
 
         evals = c.get("evaluations", []) or []
 
