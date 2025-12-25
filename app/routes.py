@@ -155,6 +155,34 @@ def save_grades(course_code):
     return jsonify(out)
 
 
+@bp.route("/api/search")
+def search():
+    try:
+        query = request.args.get("q")
+        if not query:
+            return jsonify([])
+        
+        # Lazy import to avoid circular dependency issues if any
+        from core.cursos.repository import search_courses
+        
+        courses = search_courses(query, limit=10)
+        
+        # Simplify response
+        out = []
+        for c in courses:
+            meta = c.get("meta", {}) or {}
+            out.append({
+                "title": meta.get("name") or c.get("name"),
+                "code": meta.get("code"),
+                "icon": meta.get("icon", {})
+            })
+            
+        return jsonify(out)
+    except Exception as e:
+        print(f"Search error: {e}")
+        return jsonify([]), 500
+
+
 
 
 

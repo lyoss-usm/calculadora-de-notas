@@ -1,0 +1,54 @@
+/* Basic styling for search dropdown */
+.hero-search {
+  position: relative; /* For absolute positioning of dropdown */
+}
+
+.search-results-dropdown {
+  position: absolute;
+  top: 110%; /* Just below input */
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+  padding: 8px 0;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: #1f2937;
+  transition: background-color 0.2s;
+  gap: 12px;
+}
+
+.search-result-item:hover {
+  background-color: #f3f4f6;
+}
+
+.search-result-item.empty {
+  color: #6b7280;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.result-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.result-code {
+  font-size: 0.8rem;
+  color: #6b7280;
+}

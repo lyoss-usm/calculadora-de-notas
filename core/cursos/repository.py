@@ -1,5 +1,6 @@
 import os
 from pymongo import MongoClient
+from .search import search 
 
 # Use the same URI as in config or migration script
 MONGO_URI = os.environ.get('MONGO_URI') or "mongodb://localhost:27017/calculadora_notas"
@@ -31,3 +32,13 @@ def list_courses(n: int | None = None) -> list[dict]:
 
     cursor = collection.find(limit=n if n else 0)
     return list(cursor)
+
+def search_courses(query: str, limit: int = 10) -> list[dict]:
+    """
+    Busca cursos que coincidan con la query usando índice de texto.
+    Ordena por relevancia (textScore).
+    """
+    if not query:
+        return []
+
+    return search(query, limit, collection)

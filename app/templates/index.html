@@ -1,13 +1,14 @@
-{% extends "layouts/base.html" %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}" />
-<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}" />
-{% endblock %}
-
-{% block title %}Calculadora de Notas - Inicio{% endblock %}
-
-{% block content %}
+{% extends "layouts/base.html" %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/navbar.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/landing.css') }}"
+/>
+{% endblock %} {% block title %}Calculadora de Notas - Inicio{% endblock %} {%
+block content %}
 <section class="hero-section">
   <div class="hero-content">
     <div class="hero-badge">🎓 De estudiantes para estudiantes</div>
@@ -19,29 +20,7 @@
       Analiza tu rendimiento académico, simula escenarios y<br />
       descubre qué necesitas para aprobar tus ramos.
     </p>
-    <div class="hero-search">
-      <svg
-        class="search-icon"
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4-4"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-      <input
-        type="text"
-        class="search-input"
-        placeholder="Busca tu ramo (Ej: Física I, Matemáticas I...)"
-      />
-    </div>
+    {% include 'components/search_bar.html' %}
   </div>
 </section>
 
@@ -49,18 +28,12 @@
   <h2 class="section-title">Ramos Populares</h2>
 
   <div class="courses-grid">
-    {% for course in courses %}
-      {% set title = course.title %}
-      {% set code = course.code %}
-      {% set certamenes = course.certamenes %}
-      {% set controles = course.controles %}
-      {% set tareas = course.tareas %}
-      {% set proyecto = course.proyecto %}
-      {% set laboratorio = course.laboratorio %}
-      {% set icon_gradient = course.icon_gradient %}
-      {% set icon_svg = course.icon_svg %}
-      {% include 'components/course_card.html' %}
-    {% endfor %}
+    {% for course in courses %} {% set title = course.title %} {% set code =
+    course.code %} {% set certamenes = course.certamenes %} {% set controles =
+    course.controles %} {% set tareas = course.tareas %} {% set proyecto =
+    course.proyecto %} {% set laboratorio = course.laboratorio %} {% set
+    icon_gradient = course.icon_gradient %} {% set icon_svg = course.icon_svg %}
+    {% include 'components/course_card.html' %} {% endfor %}
   </div>
 </section>
 {% endblock %}
