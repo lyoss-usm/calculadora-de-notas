@@ -5,9 +5,12 @@ Backend API routes will be added in future iterations.
 """
 from flask import Blueprint, render_template, abort, request, jsonify
 from core.cursos.repository import load_course, list_courses
-from core.analisis.roots import find_nota_necesaria, fill_empty_evals
+from core.analisis.roots import find_curva_nivel, find_nota_necesaria, fill_empty_evals
 import json
 import typing
+import copy
+import math
+
 
 bp = Blueprint('main', __name__)
 
@@ -154,8 +157,119 @@ def save_grades(course_code):
     
     return jsonify(out)
 
+@bp.route("/api/grades/<course_code>/contour", methods=["POST"])
+def grade_contour(course_code):
+    # verificamos que el json exista
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "JSON inválido o ausente"}), 400
+    
+    # verificar que estén todos los campos necesarios
+    required = {"grades", "x_indices", "y_indices", "target_grade"}
+    if not required.issubset(data):
+        faltan = sorted(list(required - set(data.keys())))
+        return jsonify({"error": f"Faltan campos: {faltan}"}), 400
+
+    # extraer datos
+    grades = data["grades"]
+    x_indices = data["x_indices"]
+    y_indices = data["y_indices"]
+    target = data["target_grade"]
+
+    # validar tipos de datos
+    if not isinstance(grades, list):
+        return jsonify({"error": "grades debe ser una lista"}), 400
+    if not isinstance(x_indices, list) or not all(isinstance(i, int) for i in x_indices):
+        return jsonify({"error": "x_indices debe ser una lista de enteros (0-based)"}), 400
+    if not isinstance(y_indices, list) or not all(isinstance(i, int) for i in y_indices):
+        return jsonify({"error": "y_indices debe ser una lista de enteros (0-based)"}), 400
+    if not isinstance(target, (int, float)) or not math.isfinite(float(target)):
+        return jsonify({"error": "target_grade inválida"}), 400
+    
+    # el target debe estar entre 0 y 100
+    target = float(target)
+    if not (0.0 <= target <= 100.0):
+        return jsonify({"error": "target_grade fuera de rango (0-100)"}), 400
+
+    try:
+        course = load_course(course_code)
+    except KeyError:
+        return jsonify({"error": "Curso no encontrado"}), 404
+    
+    # hacemos deepcopy para que este endpoint sea puro (sin estado entre requests).
+    course_raw = course
+    course = copy.deepcopy(course_raw)
+
+    # 400 longitud inconsistente
+    expected_len = len(course["context"]["values"])
+    if len(grades) != expected_len:
+        return jsonify({"error": f"Longitud inconsistente: grades debe tener {expected_len} elementos"}), 400
+
+    # 400 índices vacíos
+    if len(x_indices) == 0 or len(y_indices) == 0:
+        return jsonify({"error": "x_indices e y_indices no pueden ser vacíos"}), 400
+
+    # 400 índices fuera de rango
+    if any(i < 0 or i >= expected_len for i in x_indices):
+        return jsonify({"error": "Índices fuera de rango en x_indices"}), 400
+    if any(i < 0 or i >= expected_len for i in y_indices):
+        return jsonify({"error": "Índices fuera de rango en y_indices"}), 400
+
+    #  400 índices duplicados o solapados
+    if len(set(x_indices)) != len(x_indices):
+        return jsonify({"error": "Índices duplicados en x_indices"}), 400
+    if len(set(y_indices)) != len(y_indices):
+        return jsonify({"error": "Índices duplicados en y_indices"}), 400
+    if set(x_indices) & set(y_indices):
+        return jsonify({"error": "Índices solapados entre x_indices e y_indices"}), 400
+
+    axis_set = set(x_indices) | set(y_indices)
+    
+    base_values = []
+    for idx, g in enumerate(grades):
+        if g is None:
+            if idx not in axis_set:
+                return jsonify({"error": f"grades[{idx}] es null pero no pertenece a X/Y"}), 400
+            base_values.append(0.0) # si es null, lo llenamos con 0 temporalmente, 
+            continue
+
+        if not isinstance(g, (int, float)) or not math.isfinite(float(g)):
+            return jsonify({"error": f"grades[{idx}] inválida: debe ser number o null"}), 400
+
+        g = float(g)
+        if not (0.0 <= g <= 100.0):
+            return jsonify({"error": f"grades[{idx}] fuera de rango (0-100)"}), 400
+
+        base_values.append(g)
+
+    course["context"]["values"] = base_values
+    # calcular la curva de nivel
+    xi, yi = find_curva_nivel(course, x_indices, y_indices, target, n=101)
+
+    # filtramos lo dibujable, finito & x,y en [0,100]
+    out_x = []
+    out_y = []
+    for x, y in zip(xi, yi):
+        x = float(x)
+        y = float(y)
+
+        if not math.isfinite(x) or not math.isfinite(y):
+            continue
+        if not (0.0 <= x <= 100.0):
+            continue
+        if not (0.0 <= y <= 100.0):
+            continue
+
+        out_x.append(x)
+        out_y.append(y)
+
+    
+
+
+    return jsonify({"x": out_x, "y": out_y}), 200
 
 
 
+    
 
 
