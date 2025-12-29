@@ -246,27 +246,7 @@ def grade_contour(course_code):
     # calcular la curva de nivel
     xi, yi = find_curva_nivel(course, x_indices, y_indices, target, n=101)
 
-    # filtramos lo dibujable, finito & x,y en [0,100]
-    out_x = []
-    out_y = []
-    for x, y in zip(xi, yi):
-        x = float(x)
-        y = float(y)
-
-        if not math.isfinite(x) or not math.isfinite(y):
-            continue
-        if not (0.0 <= x <= 100.0):
-            continue
-        if not (0.0 <= y <= 100.0):
-            continue
-
-        out_x.append(x)
-        out_y.append(y)
-
-    
-
-
-    return jsonify({"x": out_x, "y": out_y}), 200
+    return jsonify({"x": xi, "y": yi}), 200
 
 
 

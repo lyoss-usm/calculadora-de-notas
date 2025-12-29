@@ -59,17 +59,6 @@ def find_nota_necesaria(model, empty_evals, target_final, x0=None):
     
     return None
 
-# nota para mi:
-# newton usa x sub n+1 = x sub n - f(x sub n) / f'(x sub n) osea que cuando f prima se hace muy chico, el paso se hace muy grande.
-# segun google; si f(x sub n) es positivo, nos pasamos de la meta, hay que ajustar hacia abajo.
-# si f(x sub n) es negativo, no llegamos a la meta, hay que ajustar hacia arriba.
-# si f' es muy chico, el ajuste es muy grande, y puede que nos pasemos mucho de la meta.
-# por eso se fuerza abs(derivative) < 1e-12 a derivative = 1e-6  (0.000001).
-# NaN es Not a Number.
-# el target es la nota final que queremos obtener.
-# newton-raphson sirve para encontrar raíces de funciones, o sea, encontrar un valor que haga que una ecuación se cumpla.
-# osea una nota que haga que la nota final sea igual al target.
-
 
 def fill_empty_evals(model, empty_evals, nota):
     '''
@@ -101,25 +90,19 @@ def find_curva_nivel(model, idx_eje_x, idx_eje_y, target, n=101):
     else:
         idx_eje_y = [int(i) for i in idx_eje_y]
 
-    # eje X en [0,100] con n puntosPara cada x fijo, resolvemos numéricamente y tal que nota_final(x, y) = target.
     xi = np.linspace(0, 100, n)
 
-    # para cada x en xi, encontrar y tal que nota_final(x, y) = target
     yi = np.full_like(xi, np.nan, dtype=np.float64)
     x0 = target
 
-    # iterar sobre cada x en xi
     for i, x in enumerate(xi):
         evals[idx_eje_x] = x
         ctx['values'] = evals.tolist()
         model['context'] = ctx
 
-        # encontrar y tal que nota_final(x, y) = target
         y1 = find_nota_necesaria(model, idx_eje_y, target, x0=x0)
-        # si no se encuentra, dejar NaN
         if y1 is None:
             yi[i] = np.nan
-        # si se encuentra, guardarlo y usarlo como x0 para la siguiente iteración
         else:
             yi[i] = float(y1)
             x0 = float(y1)
