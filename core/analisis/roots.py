@@ -27,34 +27,32 @@ def find_nota_necesaria(model, empty_evals, target_final, x0=None):
 
     max_iter = 100
     tol = 1e-7
+    h = 1e-6
+
     for i in range(max_iter):
         f_x0 = f(x0)
-        if not np.isfinite(f_x0):
-            return None
         if abs(f_x0) < tol:
             return x0
 
-        h = 1e-6
         f_x0_h = f(x0 + h)
-        if not np.isfinite(f_x0_h):
-            return None
 
         derivative = (f_x0_h - f_x0) / h
 
-        # evitar derivada 0 o demasiado pequeña o no finita, porque sino Newton se vuelve loco, o salta mucho de un valor a otro, o div por cero.
-        if (not np.isfinite(derivative)) or abs(derivative) < 1e-12:
+        if abs(derivative) < 1e-12:
             derivative = 1e-6
 
         x1 = x0 - f_x0 / derivative
+
         if not np.isfinite(x1):
             return None
+        
+        if abs(x1 - x0) < tol:
+            break
 
         x0 = x1
 
-    # si no convergió en max_iter, le damos solo si quedamos cerquita del 0.
-    # si no, devolvemos None.
     f_end = f(x0)
-    if np.isfinite(f_end) and abs(f_end) < 1e-4:
+    if np.isfinite(f_end):
         return x0
     
     return None
