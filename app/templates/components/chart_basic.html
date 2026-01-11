@@ -1,0 +1,21 @@
+{% macro chart_basic() %}
+<div class="chart-placeholder chart-basic">
+  <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+    <rect x="10" y="80" width="15" height="30" fill="var(--blue-200)" rx="2" />
+    <rect x="30" y="60" width="15" height="50" fill="var(--blue-300)" rx="2" />
+    <rect x="50" y="40" width="15" height="70" fill="var(--blue-400)" rx="2" />
+    <rect x="70" y="30" width="15" height="80" fill="var(--blue-500)" rx="2" />
+    <rect x="90" y="20" width="15" height="90" fill="var(--blue-600)" rx="2" />
+  </svg>
+  <p class="chart-placeholder-text">Tu promedio actual</p>
+  <h2 class="chart-placeholder-value" id="current-grade">--</h2>
+  <p class="chart-placeholder-label">Avance: 0%</p>
+  <div class="chart-placeholder-requirement">
+    <p class="requirement-text">
+      Para alcanzar tu meta de <strong id="goal-grade">55</strong>
+    </p>
+    <h3 class="requirement-value" id="max-grade">--</h3>
+    <p class="requirement-subtext">necesitas en el 100% restante</p>
+  </div>
+</div>
+{% endmacro %}
