@@ -1,6 +1,15 @@
 import os
 from pymongo import MongoClient
-from .search import search 
+
+try:
+    from core.cursos.search import search, normalize
+except:
+    import search
+
+try:
+    from scraping import main as scraping_main
+except:
+    from core.cursos.scraping import main as scraping_main
 
 # Use the same URI as in config or migration script
 MONGO_URI = os.environ.get('MONGO_URI') or "mongodb://localhost:27017/calculadora_notas"
@@ -42,3 +51,26 @@ def search_courses(query: str, limit: int = 10) -> list[dict]:
         return []
 
     return search(query, limit, collection)
+
+def clear_database():
+    """
+    Elimina todos los cursos de la base de datos.
+    Usar con precaución.
+    """
+    collection.delete_many({})
+
+
+if __name__ == "__main__":
+    collection.delete_many({})
+
+    ans = input("¿Desea descargar cursos y generar modelos JSON? (s/n): ").strip().lower()
+    while ans == 's':
+        scraping_main(collection)
+        ans = input("¿Desea descargar más cursos? (s/n): ").strip().lower()
+
+    collection.drop_indexes()
+    collection.create_index([("meta.norm_name", "text")], default_language="spanish")
+    
+    courses = list_courses(5)
+    for course in courses:
+        print(f"{course['meta']['code']}: {course['meta']['name']}")

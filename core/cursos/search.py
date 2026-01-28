@@ -27,30 +27,24 @@ def levenshtein_distance(a: str, b: str) -> int:
 def search(query: str, limit: int = 10, collection = None) -> list[dict]:
     query = normalize(query)
 
-    # Get all courses names and codes from the database
-    cursor = collection.find({}, {"meta.name": 1, "meta.code": 1})
-    COURSES = list(cursor)
+    cursor = (
+        collection.find(
+            {"$text": {"$search": query}},
+            {"score": {"$meta": "textScore"}, "meta": 1}
+        )
+        .sort([("score", {"$meta": "textScore"})])
+        .limit(limit)
+    )
 
-    print(COURSES)
+    results = list(cursor)
 
-    results = []
-    for course in COURSES:
-        print(f"Comparando {query} con {course['meta']['name']}")
-        normalized_name = normalize(course["meta"]["name"])
-        print(f"Normalizado: {normalized_name}")
-        distance = levenshtein_distance(query, normalized_name)
-        print(f"Distancia: {distance}")
+    if len(results) > 0:
+        return results
 
-        len_diff = len(normalized_name) - len(query)
-
-        # Only include candidates that have some similarity
-        results.append((distance - len_diff, course))
-
-    # Sort by distance (lower is better) and return the top results
-    results.sort(key=lambda x: x[0])
-
-    for r in results:
-        print(f"Distancia: {r[0]}, Curso: {r[1]['meta']['name']}")
-    return [r[1] for r in results[:limit]]
-
+    return list(
+        collection.find(
+            {"meta.norm_code": {"$regex": f"^{query}"}},
+            {"meta": 1}
+        ).limit(limit)
+    )
     

@@ -7,6 +7,12 @@ import json
 import requests
 from bs4 import BeautifulSoup
 
+try:
+  from core.cursos.search import normalize
+except:
+  from search import normalize
+
+
 
 BASE_URL = "https://siga.usm.cl/prog_oai/"
 ACADEMIA_PATH = "oai_academia.jsp"
@@ -114,7 +120,9 @@ def plantilla_modelo_curso(
   return {
     "meta": {
       "code": codigo,
+      "norm_code": normalize(codigo),
       "name": nombre,
+      "norm_name": normalize(nombre),
       "campus": sede_nombre,
       "depto": depto_nombre,
       "icon": {
@@ -153,14 +161,9 @@ def plantilla_modelo_curso(
   }
 
 
-def guardar_modelo(codigo: str, modelo: Dict) -> Path:
-  """Guarda el modelo JSON del curso en la carpeta de modelos."""
-  OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-  nombre_archivo = f"{codigo.replace('-', '').upper()}.json"
-  ruta = OUTPUT_DIR / nombre_archivo
-  with ruta.open("w", encoding="utf-8") as f:
-    json.dump(modelo, f, indent=2, ensure_ascii=False)
-  return ruta
+def guardar_modelo(modelo: Dict, collection):
+  """Guarda el modelo JSON dentro de la base de datos mongodb"""
+  collection.insert_one(modelo)
 
 
 def elegir_opcion(codigo_a_nombre: Dict[str, str], prompt: str) -> Tuple[str, str]:
@@ -175,7 +178,7 @@ def elegir_opcion(codigo_a_nombre: Dict[str, str], prompt: str) -> Tuple[str, st
     print("Código inválido, intente nuevamente.")
 
 
-def main() -> None:
+def main(collection) -> None:
   """Script interactivo para descargar cursos y generar modelos JSON."""
   soup_inicio = get_soup(BASE_URL + ACADEMIA_PATH)
   if not soup_inicio:
@@ -213,8 +216,7 @@ def main() -> None:
   for codigo, nombre in cursos:
     print(f"{codigo:<10} - {nombre}")
     modelo = plantilla_modelo_curso(codigo, nombre, sede_nombre, depto_nombre)
-    ruta = guardar_modelo(codigo, modelo)
-    print(f"Archivo {ruta.name} creado.")
+    guardar_modelo(modelo, collection)
 
   print(f"Total de cursos: {len(cursos)}")
 

@@ -45,6 +45,32 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+### 5. Configurar base de datos
+
+Este proyecto utiliza **MongoDB** como base de datos para almacenar información de los cursos. Asegúrate de tener MongoDB instalado y en ejecución en tu máquina local o utiliza un servicio de MongoDB en la nube.
+
+#### Configuración de la URI de MongoDB
+
+Por defecto, la aplicación se conecta a `mongodb://localhost:27017/calculadora_notas`. Si necesitas una configuración personalizada, establece la variable de entorno:
+
+```bash
+export MONGO_URI="mongodb://usuario:contraseña@host:puerto/calculadora_notas"
+```
+
+#### Poblar la base de datos
+
+Para descargar cursos y crear los índices necesarios:
+
+```bash
+python -m core.cursos.repository
+```
+
+El script te guiará en el proceso de descarga y configuración inicial. Este proceso:
+
+1. Descarga información de cursos desde la fuente
+2. Almacena los datos en MongoDB
+3. Crea índices de texto optimizados para búsquedas en español
+
 ## Ejecución
 
 ### Modo Desarrollo
