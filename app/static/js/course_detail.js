@@ -38,9 +38,49 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         chartBasic.style.display = "none";
         chartAdvanced.style.display = "flex";
+        updateContour();
       }
     });
   });
+
+  // Axis Toggle Functionality
+  const axisButtons = document.querySelectorAll(".axis-btn");
+
+  axisButtons.forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault(); // Prevent accordion expansion if needed
+      e.stopPropagation();
+
+      const parent = this.parentElement;
+      if (parent.classList.contains("locked")) return;
+
+      // Deactivate siblings
+      parent
+        .querySelectorAll(".axis-btn")
+        .forEach((b) => b.classList.remove("active"));
+
+      // Activate clicked
+      this.classList.add("active");
+
+      // Update state
+      parent.dataset.state = this.dataset.axis;
+
+      // Trigger contour update
+      updateContour();
+    });
+  });
+
+  function updateToggleVisibility(input) {
+    const group = input.closest(".evaluation-input-group");
+    const toggle = group.querySelector(".axis-toggle");
+    if (!toggle) return;
+
+    if (input.value.trim() !== "") {
+      toggle.classList.add("locked");
+    } else {
+      toggle.classList.remove("locked");
+    }
+  }
 
   // Auto-update calculations when inputs change
   const evaluationInputs = document.querySelectorAll(".evaluation-input");
@@ -138,6 +178,133 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }, 1000);
 
+  const updateContour = debounce(function () {
+    if (!courseCode) return;
+
+    // Check if advanced chart is active (optional optimization)
+    const chartAdvanced = document.querySelector(".chart-advanced");
+    if (chartAdvanced.style.display === "none") return;
+
+    const goalInput = document.getElementById("meta-goal-input");
+    const goalValue = goalInput ? parseFloat(goalInput.value) : 55.0;
+
+    const grades = [];
+    const x_indices = [];
+    const y_indices = [];
+
+    evaluationInputs.forEach((input, index) => {
+      const val = input.value.trim();
+      const group = input.closest(".evaluation-input-group");
+      const toggle = group.querySelector(".axis-toggle");
+
+      if (val === "") {
+        grades.push(null);
+        if (toggle && !toggle.classList.contains("locked")) {
+          const state = toggle.dataset.state; // 'x' or 'y'
+          if (state === "x") x_indices.push(index);
+          else if (state === "y") y_indices.push(index);
+        }
+      } else {
+        grades.push(parseFloat(val));
+      }
+    });
+
+    // Extract evaluation names for axis titles
+    let xNames = [];
+    let yNames = [];
+
+    // We iterate again or store it during the first pass. Since we need names for selected indices:
+    // Actually, distinct arrays for names is easier.
+
+    evaluationInputs.forEach((input, index) => {
+      const group = input.closest(".evaluation-input-group");
+      // The title is in the accordion button, which is up the DOM tree differently
+      // structure: .evaluation-group > .evaluation-accordion > .accordion-left > ... .accordion-title
+      // But .evaluation-input-group is inside .evaluation-content inside .evaluation-group
+      const evaluationGroup = input.closest(".evaluation-group");
+      const titleEl = evaluationGroup.querySelector(".accordion-title");
+      const title = titleEl ? titleEl.innerText.trim() : `Eval ${index + 1}`;
+
+      if (x_indices.includes(index)) xNames.push(title);
+      if (y_indices.includes(index)) yNames.push(title);
+    });
+
+    fetch(`/api/grades/${courseCode}/contour`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        grades: grades,
+        x_indices: x_indices,
+        y_indices: y_indices,
+        target_grade: goalValue,
+      }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        console.log("Contour data:", data);
+        if (typeof renderAdvancedChart === "function") {
+          renderAdvancedChart(data, xNames.join(", "), yNames.join(", "));
+        }
+      })
+      .catch(console.error);
+  }, 1000);
+
+  function renderAdvancedChart(data, xTitle, yTitle) {
+    const plotDiv = document.getElementById("advanced-chart");
+    if (!plotDiv) return;
+
+    // Ensure data.x and data.y are valid arrays
+    if (!data.x || !data.y || data.x.length === 0) {
+      // Verify if we have no solution or waiting for data
+      // Plotly might need an empty trace or clear
+      Plotly.purge(plotDiv);
+      return;
+    }
+
+    const trace = {
+      x: data.x,
+      y: data.y,
+      mode: "lines",
+      type: "scatter",
+      line: {
+        color: "#10b981", // emerald-500
+        width: 3,
+      },
+      name: "Nivel Objetivo",
+    };
+
+    const layout = {
+      xaxis: {
+        title: { text: xTitle, font: { size: 14 } },
+        range: [0, 100],
+        fixedrange: true, // Prevent zoom/pan per requirements (or at least keeping range [0, 100])
+        showgrid: true,
+        zeroline: true,
+        constrain: "domain",
+      },
+      yaxis: {
+        title: { text: yTitle, font: { size: 14 } },
+        range: [0, 100],
+        fixedrange: true,
+        showgrid: true,
+        zeroline: true,
+        scaleanchor: "x",
+        scaleratio: 1,
+        constrain: "domain",
+      },
+      margin: { t: 40, r: 20, b: 60, l: 60 },
+      showlegend: false,
+      hovermode: "closest",
+    };
+
+    const config = {
+      responsive: true,
+      displayModeBar: false, // Clean look
+    };
+
+    Plotly.newPlot(plotDiv, [trace], layout, config);
+  }
+
   evaluationInputs.forEach((input) => {
     input.addEventListener("input", function (e) {
       let value = this.value;
@@ -158,7 +325,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       this.value = value;
+      this.value = value;
+      updateToggleVisibility(this);
       saveGrades();
+      updateContour();
     });
 
     input.addEventListener("keypress", function (e) {

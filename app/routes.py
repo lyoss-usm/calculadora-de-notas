@@ -232,7 +232,7 @@ def grade_contour(course_code):
     course["context"]["values"] = base_values
     xi, yi = find_curva_nivel(course, x_indices, y_indices, target, n=101)
 
-    return jsonify({"x": xi, "y": yi}), 200
+    return jsonify({"x": xi.tolist(), "y": yi.tolist()}), 200
 
 
 
