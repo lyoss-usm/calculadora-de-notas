@@ -26,6 +26,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const chartBasic = document.querySelector(".chart-basic");
   const chartAdvanced = document.querySelector(".chart-advanced");
 
+  // Axis Toggle Buttons
+  const axisToggles = document.querySelectorAll(".axis-toggle");
+
   metaToggles.forEach((toggle) => {
     toggle.addEventListener("click", function () {
       metaToggles.forEach((t) => t.classList.remove("active"));
@@ -35,9 +38,17 @@ document.addEventListener("DOMContentLoaded", function () {
       if (this.textContent.trim() === "Básico") {
         chartBasic.style.display = "flex";
         chartAdvanced.style.display = "none";
+        for (let btn of axisToggles) {
+          btn.style.display = "none";
+        }
       } else {
         chartBasic.style.display = "none";
         chartAdvanced.style.display = "flex";
+
+        for (let btn of axisToggles) {
+          btn.style.display = "flex";
+        }
+
         updateContour();
       }
     });
