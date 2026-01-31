@@ -183,6 +183,7 @@
 
 .chart-advanced {
   padding: 20px;
+  justify-content: start !important;
 }
 
 .chart-advanced svg {
